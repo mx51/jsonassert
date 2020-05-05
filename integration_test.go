@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/kinbiko/jsonassert"
+	"github.com/mx51/jsonassert"
 )
 
 func TestAssertf(t *testing.T) {
@@ -90,6 +90,64 @@ but expected JSON was:
 	for _, tc := range tt {
 		t.Run(tc.name, func(st *testing.T) {
 			tp, ja := setup()
+			ja.Assertf(tc.act, tc.exp)
+			if got := len(tp.messages); got != len(tc.msgs) {
+				st.Errorf("expected %d assertion message(s) but got %d", len(tc.msgs), got)
+				if len(tc.msgs) > 0 {
+					st.Errorf("Expected the following messages:")
+					for _, msg := range tc.msgs {
+						st.Errorf(" - %s", msg)
+					}
+				}
+
+				if len(tp.messages) > 0 {
+					st.Errorf("Got the following messages:")
+					for _, msg := range tp.messages {
+						st.Errorf(" - %s", msg)
+					}
+				}
+				return
+			}
+			for i := range tc.msgs {
+				if exp, got := tc.msgs[i], tp.messages[i]; got != exp {
+					st.Errorf("expected assertion message:\n'%s'\nbut got\n'%s'", exp, got)
+				}
+			}
+		})
+	}
+}
+func TestAssertfPartial(t *testing.T) {
+	tt := []struct {
+		name string
+		act  string
+		exp  string
+		msgs []string
+	}{
+		{
+			name: "partial_matching_on_object",
+			act:  `{"foo": "bar", "baz": "ok"}`,
+			exp:  `{"baz": "ok"}`,
+			msgs: []string{},
+		},
+		{
+			name: "object_value_not_found",
+			act:  `{"foo": "bar"}`,
+			exp:  `{"baz": "ok"}`,
+			msgs: []string{
+				`expected object key(s) ["baz"] missing at '$'`,
+			},
+		},
+		{
+			name: "partial_matching_on_array",
+			act:  `{"foo": ["bar", "baz", "ok"]}`,
+			exp:  `{"foo": ["bar", "<<STRING>>", "ok"]}`,
+			msgs: []string{},
+		},
+	}
+	for _, tc := range tt {
+		t.Run(tc.name, func(st *testing.T) {
+			tp, ja := setup()
+			ja.Partial()
 			ja.Assertf(tc.act, tc.exp)
 			if got := len(tp.messages); got != len(tc.msgs) {
 				st.Errorf("expected %d assertion message(s) but got %d", len(tc.msgs), got)

@@ -31,6 +31,41 @@ func (a *Asserter) pathassertf(path, act, exp string) {
 		return
 	}
 
+	if expBoolean, _ := extractString(exp); expBoolean == "<<BOOLEAN>>" {
+		if actType != jsonBoolean {
+			a.tt.Errorf(`expected the presence of a '%s' value at '%s', but was '%s'`, jsonBoolean, path, actType)
+		}
+		return
+	}
+
+	if expNumber, _ := extractString(exp); expNumber == "<<NUMBER>>" {
+		if actType != jsonNumber {
+			a.tt.Errorf(`expected the presence of a '%s' value at '%s', but was '%s'`, jsonNumber, path, actType)
+		}
+		return
+	}
+
+	if expString, _ := extractString(exp); expString == "<<STRING>>" {
+		if actType != jsonString {
+			a.tt.Errorf(`expected the presence of a '%s' value at '%s', but was '%s'`, jsonString, path, actType)
+		}
+		return
+	}
+
+	if expObject, _ := extractString(exp); expObject == "<<OBJECT>>" {
+		if actType != jsonObject {
+			a.tt.Errorf(`expected the presence of an '%s' value at '%s', but was '%s'`, jsonObject, path, actType)
+		}
+		return
+	}
+
+	if expArray, _ := extractString(exp); expArray == "<<ARRAY>>" {
+		if actType != jsonArray {
+			a.tt.Errorf(`expected the presence of an '%s' value at '%s', but was '%s'`, jsonArray, path, actType)
+		}
+		return
+	}
+
 	if actType != expType {
 		a.tt.Errorf("actual JSON (%s) and expected JSON (%s) were of different types at '%s'", actType, expType, path)
 		return

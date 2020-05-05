@@ -17,6 +17,7 @@ type Printer interface {
 // See Asserter.Assertf for the main use of this package.
 type Asserter struct {
 	tt
+	partial bool
 }
 
 // New creates a new *jsonassert.Asserter for making assertions against JSON payloads.
@@ -40,6 +41,10 @@ func New(p Printer) *Asserter {
 		return &Asserter{tt: t}
 	}
 	return &Asserter{tt: &noopHelperTT{Printer: p}}
+}
+
+func (a *Asserter) Partial() {
+	a.partial = true
 }
 
 // Assertf takes two strings, the first being the 'actual' JSON that you wish to

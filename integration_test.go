@@ -116,7 +116,7 @@ but expected JSON was:
 		})
 	}
 }
-func TestAssertfPartial(t *testing.T) {
+func TestAssertContainsf(t *testing.T) {
 	tt := []struct {
 		name string
 		act  string
@@ -147,8 +147,7 @@ func TestAssertfPartial(t *testing.T) {
 	for _, tc := range tt {
 		t.Run(tc.name, func(st *testing.T) {
 			tp, ja := setup()
-			ja.Partial()
-			ja.Assertf(tc.act, tc.exp)
+			ja.AssertContainsf(tc.act, tc.exp)
 			if got := len(tp.messages); got != len(tc.msgs) {
 				st.Errorf("expected %d assertion message(s) but got %d", len(tc.msgs), got)
 				if len(tc.msgs) > 0 {

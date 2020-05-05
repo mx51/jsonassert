@@ -43,10 +43,6 @@ func New(p Printer) *Asserter {
 	return &Asserter{tt: &noopHelperTT{Printer: p}}
 }
 
-func (a *Asserter) Partial() {
-	a.partial = true
-}
-
 // Assertf takes two strings, the first being the 'actual' JSON that you wish to
 // make assertions against. The second string is the 'expected' JSON, which
 // can be treated as a template for additional format arguments.
@@ -74,4 +70,10 @@ func (a *Asserter) Partial() {
 func (a *Asserter) Assertf(actualJSON, expectedJSON string, fmtArgs ...interface{}) {
 	a.tt.Helper()
 	a.pathassertf("$", actualJSON, fmt.Sprintf(expectedJSON, fmtArgs...))
+}
+
+// AssertContainsf asserts that the JSON object only contains the expected elements
+func (a *Asserter) AssertContainsf(actualJSON, expectedJSON string, fmtArgs ...interface{}) {
+	a.partial = true
+	a.Assertf(actualJSON, expectedJSON, fmtArgs...)
 }

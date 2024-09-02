@@ -72,8 +72,20 @@ func (a *Asserter) Assertf(actualJSON, expectedJSON string, fmtArgs ...interface
 	a.pathassertf("$", actualJSON, fmt.Sprintf(expectedJSON, fmtArgs...))
 }
 
+// Assert is identical to Assertf but without format args
+func (a *Asserter) Assert(actualJSON, expectedJSON string) {
+	a.tt.Helper()
+	a.pathassertf("$", actualJSON, expectedJSON)
+}
+
 // AssertContainsf asserts that the JSON object only contains the expected elements
 func (a *Asserter) AssertContainsf(actualJSON, expectedJSON string, fmtArgs ...interface{}) {
 	a.partial = true
 	a.Assertf(actualJSON, expectedJSON, fmtArgs...)
+}
+
+// AssertContains is identical to AssertContainsf but without format args
+func (a *Asserter) AssertContains(actualJSON, expectedJSON string) {
+	a.partial = true
+	a.Assert(actualJSON, expectedJSON)
 }

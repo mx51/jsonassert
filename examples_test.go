@@ -6,14 +6,14 @@ import (
 	"github.com/mx51/jsonassert"
 )
 
+// using the varible name 't' to mimic a *testing.T variable
+var t *printer
+
 type printer struct{}
 
 func (p *printer) Errorf(format string, args ...interface{}) {
 	fmt.Println(fmt.Sprintf(format, args...))
 }
-
-// using the varible name 't' to mimic a *testing.T variable
-var t *printer
 
 func ExampleNew() {
 	ja := jsonassert.New(t)
